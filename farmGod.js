@@ -460,7 +460,7 @@ window.FarmGod.Main = (function (Library, Translation) {
 
   const buildTable = function (plan) {
     let html = `<div class="vis farmGodContent"><h4>FarmGod</h4><table class="vis" width="100%">
-                <tr><div id="FarmGodProgessbar" class="progress-bar live-progress-bar progress-bar-alive" style="width:100%;height=100%;margin:5px auto;"><div style="background: rgb(146, 194, 0);"></div><span class="label" style="margin-top:0px;font-size:30px;"></span></div></tr>
+                <tr><div id="FarmGodProgessbar" class="progress-bar live-progress-bar progress-bar-alive" style="width:100%;height:100%;margin:5px auto;"><div style="background: rgb(146, 194, 0);"></div><span class="label" style="margin-top:0px;font-size:30px;"></span></div></tr>
                 <tr><th style="text-align:center;font-size: 20px;">${t.table.origin}</th><th style="text-align:center;font-size: 20px;">${t.table.target}</th><th style="text-align:center;font-size: 20px;">${t.table.fields}</th><th style="text-align:center;">${t.table.farm}</th></tr>`;
 
     if (!$.isEmptyObject(plan)) {
