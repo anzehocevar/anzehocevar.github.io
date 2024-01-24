@@ -460,7 +460,7 @@ window.FarmGod.Main = (function (Library, Translation) {
 
   const buildTable = function (plan) {
     let html = `<div class="vis farmGodContent"><h4>FarmGod</h4><table class="vis" width="100%">
-                <tr><div id="FarmGodProgessbar" class="progress-bar live-progress-bar progress-bar-alive" style="width:98%;margin:5px auto;"><div style="background: rgb(146, 194, 0);"></div><span class="label" style="margin-top:0px;font-size:50px;"></span></div></tr>
+                <tr><div id="FarmGodProgessbar" class="progress-bar live-progress-bar progress-bar-alive" style="width:100%;margin:5px auto;"><div style="background: rgb(146, 194, 0);"></div><span class="label" style="margin-top:0px;font-size:30px;"></span></div></tr>
                 <tr><th style="text-align:center;font-size: 20px;">${t.table.origin}</th><th style="text-align:center;font-size: 20px;">${t.table.target}</th><th style="text-align:center;font-size: 20px;">${t.table.fields}</th><th style="text-align:center;">${t.table.farm}</th></tr>`;
 
     if (!$.isEmptyObject(plan)) {
@@ -471,7 +471,7 @@ window.FarmGod.Main = (function (Library, Translation) {
 
         plan[prop].forEach((val, i) => {
           html += `<tr class="farmRow row_${(i % 2 == 0) ? 'a' : 'b'}">
-                    <td style="text-align:center;font-size: 20px;"><a href="${game_data.link_base_pure}info_village&id=${val.origin.id}">${val.origin.name} (${val.origin.coord})</a></td>
+                    <td style="text-align:center;font-size: 20px;"><a href="${game_data.link_base_pure}info_village&id=${val.ohttps://github.com/anzehocevar/anzehocevar.github.io/farmGod.jsrigin.id}">${val.origin.name} (${val.origin.coord})</a></td>
                     <td style="text-align:center;font-size: 20px;"><a href="${game_data.link_base_pure}info_village&id=${val.target.id}">${val.target.coord}</a></td>
                     <td style="text-align:center;font-size: 20px;">${val.fields.toFixed(2)}</td>
                     <td style="text-align:center;font-size: 20px;"><a href="#" data-origin="${val.origin.id}" data-target="${val.target.id}" data-template="${val.template.id}" class="farmGod_icon farm_icon farm_icon_${val.template.name}" style="margin:auto;font-size: 20px;"></a></td>
