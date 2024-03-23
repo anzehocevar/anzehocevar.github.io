@@ -20,6 +20,9 @@ function getMintVillage() {
 }
 
 const mintVillage = getMintVillage()
+let woodPercentage = 0.6;
+let stonePercentage = 0.5207;
+let ironPercentage = 0.4252;
 
 // Function to extract information from village row
 function extractVillageInfo(row) {
