@@ -84,7 +84,7 @@ rows.forEach(function(row) {
 function createTable() {
     let table = document.createElement('table');
     table.setAttribute('id', 'resourceSender'); // Set the id attribute for the table
-    let tableContainer = document.getElementById('resourceSenderContainer'); // Assuming there's a container element with id 'resourceSenderContainer'
+    let tableContainer = document.getElementById('resourceSender'); // Assuming there's a container element with id 'resourceSenderContainer'
     
     table.innerHTML = `
         <thead>
