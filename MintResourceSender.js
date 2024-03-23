@@ -83,21 +83,23 @@ rows.forEach(function(row) {
 
 function createTable() {
     let table = document.createElement('table');
-    let tableContainer = document.getElementById('resourceSender');
+    table.setAttribute('id', 'resourceSender'); // Set the id attribute for the table
+    let tableContainer = document.getElementById('resourceSenderContainer'); // Assuming there's a container element with id 'resourceSenderContainer'
     
     table.innerHTML = `
         <thead>
             <tr>
                 <th>Destination</th>
                 <th>Source</th>
+                <th>Nearest Village</th>
                 <th>Resources</th>
             </tr>
         </thead>
         <tbody id="resourceSenderBody"></tbody>
     `;
+    
     tableContainer.appendChild(table);
 }
-
 
 
 function findNearestInDirection(source, mintVillage, villages, amount) {
