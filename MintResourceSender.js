@@ -316,40 +316,37 @@ function calculateResAmounts(totalWood, totalStone, totalIron, resLimit, merchan
 }
 
 
-function sendToNearest(source, mintVillage, villages){
-	let x = mintVillage.X; 
-	let y = mintVillage.Y;
-	x -= source.X;
-	y -= source.Y;
-	// 1coin = 28.000 30.000 25.000
-	// ratio = 1.12   1.2	 1      ==  3.32
+function sendToNearest(source, mintVillage, villages) {
+    let x = mintVillage.X;
+    let y = mintVillage.Y;
+    x -= source.X;
+    y -= source.Y;
 
-    console.log("source: ", source)
-	// amount (shinko)
-	amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
-	console.log(amount)
+    // Calculate resource amounts (shinko)
+    let amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
 
-	// Gets the nearest village that has enough warehouse & is closer
-    if(source.distance > 5){
-        sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
+    // Gets the nearest village that has enough warehouse & is closer
+    let sendToVillage = findNearestInDirection(source, mintVillage, villages, amount);
+
+    if (sendToVillage == null) {
+        console.log("No nearest village found");
+        // Handle case when no suitable village is found
+        // You can set sendToVillage to mintVillage or any other default value
+        sendToVillage = mintVillage;
     }
-    else sendToVillage = mintVillage
 
-    if(sendToVillage == null){
-        console.log("no neartest found")
-        sendToVillage = mintVillage    
-    }
-    console.log("send to", sendToVillage)
+    console.log("Sending to village:", sendToVillage);
 
-	// Create HTML row for sending
+    // Create HTML row for sending
     let row = document.createElement('tr');
     row.innerHTML = `
         <td>${mintVillage.name}</td>
         <td>${source.name}</td>
-		<td>${sendToVillage.name}</td>
+        <td>${sendToVillage.name}</td>
         <td>Wood: ${amount.wood}, Stone: ${amount.stone}, Iron: ${amount.iron}</td>
-		<td><button onclick="sendPlease(${sendToVillage.id}, ${source.id}, ${amount.wood}, ${amount.stone}, ${amount.iron})">Send</button></td>
+        <td><button onclick="sendPlease(${sendToVillage.id}, ${source.id}, ${amount.wood}, ${amount.stone}, ${amount.iron})">Send</button></td>
     `;
+
 
     // <td><button onclick="sendResource('${source.id}', '${sendToVillage.id}', ${JSON.stringify(amount)}, 'dialog_${source.id}_${sendToVillage.id}')">Send</button></td>
 
