@@ -19,7 +19,7 @@ function getMintVillage() {
 	return values;
 }
 
-const mintVillage = getMintVillage()
+let mintVillage = getMintVillage()
 let woodPercentage = 0.6;
 let stonePercentage = 0.5207;
 let ironPercentage = 0.4252;
