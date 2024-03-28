@@ -63,8 +63,8 @@ function extractVillageInfo(row) {
         id: villageId,
         name: name,
         coords: coords,
-        X: coordX,
-        Y: coordY,
+        X: parseInt(coordX),
+        Y: parseInt(coordY),
         wood: parseInt(wood),
         stone: parseInt(stone),
         iron: parseInt(iron),
@@ -76,8 +76,10 @@ function extractVillageInfo(row) {
 
 // Get the production table body
 let productionTableBody = document.querySelector('#production_table tbody');
+
 // Get all village rows
 let rows = productionTableBody.querySelectorAll('tr');
+
 // Loop through each row and extract village information
 let villages = [];
 rows.forEach(function(row) {
@@ -86,22 +88,29 @@ rows.forEach(function(row) {
 	console.log(villageInfo)
 });
 
+// find all information about mintVillage
 mintVillage = villages.find(function(village) {
     return parseInt(village.X) == parseInt(mintVillage.X) && parseInt(village.Y) == parseInt(mintVillage.Y);
 });
 
+// get distance from mintVillage
 villages.forEach(function(village) {
     return getDistance(mintVillage, village);
 });
 
+// Sort villages by distance in decreasing order
+villages.sort(function(a, b) {
+    return b.distance - a.distance; // Sort in decreasing order
+});
+
 console.log("mint village:", mintVillage)
 
-
+// Create table that will hold mintResourceSender information
 function createTable() {
     let table = document.createElement('table');
     table.setAttribute('id', 'resourceSender'); // Set the id attribute for the table
     let tableContainer = document.getElementById('header_info'); // Assuming there's a container element with id 'resourceSenderContainer'
-    
+
     table.innerHTML = `
         <thead>
             <tr>
@@ -177,7 +186,7 @@ function getDistance(source, destination){
 }
 
 
-// Define the sendResource function
+// Define the sendResource function - joinked from Shinko
 function sendResource(villageId, targetId, amount, dialogId) {
     // Set a loading flag to true temporarily
     $('#loading').prop('visible', true);
@@ -296,7 +305,12 @@ function sendToNearest(source, mintVillage, villages){
 	console.log(amount)
 
 	// Gets the nearest village that has enough warehouse & is closer
-	sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
+    if(source.distance > 5){
+        sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
+    }
+    else sendToVillage = null
+    
+
     if(sendToVillage == null){
         console.log("no neartest found")
         sendToVillage = mintVillage    
