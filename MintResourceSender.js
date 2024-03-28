@@ -64,7 +64,7 @@ function extractVillageInfo(row) {
     let availableMerchants = merchants.split("/")[0];
 
     return {
-        id: villageId,
+        id: parseInt(villageId),
         name: name,
         coords: coords,
         X: parseInt(coordX),
