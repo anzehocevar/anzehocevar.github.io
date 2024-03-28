@@ -89,6 +89,10 @@ mintVillage = villages.find(function(village) {
     return parseInt(village.X) == parseInt(mintVillage.X) && parseInt(village.Y) == parseInt(mintVillage.Y);
 });
 
+villages.forEach(function(village) {
+    return getDistance(sourceVillage, village);
+});
+
 console.log("mint village:", mintVillage)
 
 
@@ -164,6 +168,13 @@ function findNearestInDirection(source, mintVillage, villages, amount) {
 
     return nearestVillage;
 }
+
+
+function getDistance(source, destination){
+    destination.distance = Math.sqrt(Math.pow((source.X - destination.X), 2) + Math.pow((source.Y - destination.Y), 2));
+    return destination;
+}
+
 
 // Define the sendResource function
 function sendResource(villageId, targetId, amount, dialogId) {
@@ -288,7 +299,11 @@ function sendToNearest(source, mintVillage, villages){
 
 	// Gets the nearest village that has enough warehouse & is closer
 	sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
-    console.log("send to", sendToVillage.name)
+    if(sendToVillage == null){
+        console.log("no neartest found")
+        sendToVillage = mintVillage    
+    }
+    console.log("send to", sendToVillage)
 
 	// Create HTML row for sending
     let row = document.createElement('tr');
