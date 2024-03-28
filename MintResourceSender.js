@@ -86,7 +86,7 @@ rows.forEach(function(row) {
 });
 
 mintVillage = villages.find(function(village) {
-    return parseInt(village.coordX) === parseInt(mintVillage.X) && parseInt(village.coordY) === parseInt(mintVillage.Y);
+    return parseInt(village.X) == parseInt(mintVillage.X) && parseInt(village.Y) == parseInt(mintVillage.Y);
 });
 
 console.log("mint village:", mintVillage)
