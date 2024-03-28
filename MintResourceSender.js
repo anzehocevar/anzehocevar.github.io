@@ -90,7 +90,7 @@ mintVillage = villages.find(function(village) {
 });
 
 villages.forEach(function(village) {
-    return getDistance(sourceVillage, village);
+    return getDistance(mintVillage, village);
 });
 
 console.log("mint village:", mintVillage)
