@@ -84,6 +84,13 @@ rows.forEach(function(row) {
 	console.log(villageInfo)
 });
 
+mintVillage = villages.find(function(village) {
+    return village.coordX === mintVillage.X && village.coordY === mintVillage.Y;
+});
+
+console.log("mint village:", mintVillage)
+
+
 function createTable() {
     let table = document.createElement('table');
     table.setAttribute('id', 'resourceSender'); // Set the id attribute for the table
@@ -207,6 +214,10 @@ function sendResource(villageId, targetId, amount, dialogId) {
 }
 
 function calculateResAmounts(totalWood, totalStone, totalIron, resLimit, merchants) {
+    totalWood = parseInt(totalWood)
+    totalStone = parseInt(totalStone)
+    totalIron = parseInt(totalIron)
+
     // Calculate total resources to send based on merchant capacity
     let totalResourcesToSend = merchants * 1000;
 
@@ -284,7 +295,7 @@ function sendToNearest(source, mintVillage, villages){
         <td>${mintVillage.name}</td>
         <td>${source.name}</td>
 		<td>${sendToVillage.name}</td>
-        <td>Wood: ${wood}, Stone: ${stone}, Iron: ${iron}</td>
+        <td>Wood: ${amount.wood}, Stone: ${amount.stone}, Iron: ${amount.iron}</td>
 		<td><button onclick="sendResource('${source.id}', '${sendToVillage.id}', ${JSON.stringify(amount)}, 'dialog_${source.id}_${sendToVillage.id}')">Send</button></td>
     `;
 
