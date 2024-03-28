@@ -150,7 +150,7 @@ function findNearestInDirection(source, mintVillage, villages, amount) {
     // Loop through all villages
     villages.forEach(function(village) {
         // skip villages with the same distance
-        if(source.distance < village.distance) return;
+        if(source.distance < village.distance || (source.id != village.id)) return;
 
         // Parse the coordinates of the current village
         let villageX = parseInt(village.X);
@@ -333,8 +333,7 @@ function sendToNearest(source, mintVillage, villages){
     if(source.distance > 5){
         sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
     }
-    else sendToVillage = null
-    
+    else sendToVillage = mintVillage
 
     if(sendToVillage == null){
         console.log("no neartest found")
