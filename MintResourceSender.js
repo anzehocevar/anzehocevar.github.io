@@ -269,13 +269,13 @@ function sendToNearest(source, mintVillage, villages){
 	// 1coin = 28.000 30.000 25.000
 	// ratio = 1.12   1.2	 1      ==  3.32
 
-    console.log("source", source.name)
+    console.log("source: ", source)
 	// amount (shinko)
 	amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
 	console.log(amount)
 
 	// Gets the nearest village that has enough warehouse & is closer
-	sendToVillage = sendToNearest(source, mintVillage, villages, amount)
+	sendToVillage = findNearestInDirection(source, mintVillage, villages, amount)
     console.log("send to", sendToVillage.name)
 
 	// Create HTML row for sending
