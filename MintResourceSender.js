@@ -57,6 +57,7 @@ function extractVillageInfo(row) {
 
     let warehouse = cells[4].innerText.trim();
     let merchants = cells[5].querySelector('a').innerText.trim();
+    let availableMerchants = merchants.split("/")[0];
 
     return {
         id: villageId,
@@ -64,11 +65,11 @@ function extractVillageInfo(row) {
         coords: coords,
         X: coordX,
         Y: coordY,
-        wood: wood,
-        stone: stone,
-        iron: iron,
-        warehouse: warehouse,
-        merchants: merchants
+        wood: parseInt(wood),
+        stone: parseInt(stone),
+        iron: parseInt(iron),
+        warehouse: parseInt(warehouse),
+        merchants: parseInt(availableMerchants)
     };
 }
 
@@ -226,9 +227,6 @@ function sendResource(villageId, targetId, amount, dialogId) {
 }
 
 function calculateResAmounts(totalWood, totalStone, totalIron, resLimit, merchants) {
-    totalWood = parseInt(totalWood)
-    totalStone = parseInt(totalStone)
-    totalIron = parseInt(totalIron)
 
     // Calculate total resources to send based on merchant capacity
     let totalResourcesToSend = merchants * 1000;
