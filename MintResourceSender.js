@@ -194,6 +194,7 @@ function getDistance(source, destination){
 
 
 function sendPlease(targetId, originId, wood, stone, iron){
+    
     var form = {
         "target_id" : targetId, 
         "wood" : wood,
@@ -348,7 +349,7 @@ function sendToNearest(source, mintVillage, villages){
         <td>${source.name}</td>
 		<td>${sendToVillage.name}</td>
         <td>Wood: ${amount.wood}, Stone: ${amount.stone}, Iron: ${amount.iron}</td>
-		<td><button onclick="sendPlease('${sendToVillage.id}', '${source.id}', ${amount.wood}, ${amount.stone}, ${amount.iron})">Send</button></td>
+		<td><button onclick="sendPlease(${sendToVillage.id}, ${source.id}, ${amount.wood}, ${amount.stone}, ${amount.iron})">Send</button></td>
     `;
 
     // <td><button onclick="sendResource('${source.id}', '${sendToVillage.id}', ${JSON.stringify(amount)}, 'dialog_${source.id}_${sendToVillage.id}')">Send</button></td>
