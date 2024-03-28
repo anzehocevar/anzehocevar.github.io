@@ -21,9 +21,13 @@ function getMintVillage() {
 
 let mintVillage = getMintVillage()
 console.log(mintVillage)
-let woodPercentage = 0.6;
-let stonePercentage = 0.5207;
-let ironPercentage = 0.4252;
+// let woodPercentage = 0.6;
+// let stonePercentage = 0.5207;
+// let ironPercentage = 0.4252;
+
+let woodPercentage = 0.33655;
+let stonePercentage = 0.36217;
+let ironPercentage = 0.30128;
 
 // Function to extract information from village row
 function extractVillageInfo(row) {
@@ -145,6 +149,9 @@ function findNearestInDirection(source, mintVillage, villages, amount) {
 
     // Loop through all villages
     villages.forEach(function(village) {
+        // skip villages with the same distance
+        if(source.distance < village.distance) return;
+
         // Parse the coordinates of the current village
         let villageX = parseInt(village.X);
         let villageY = parseInt(village.Y);
