@@ -193,8 +193,25 @@ function getDistance(source, destination){
 }
 
 
+function sendPlease(targetId, originId, wood, stone, iron){
+    var form = {
+        "target_id" : targetId, 
+        "wood" : wood,
+        "stone" : stone, 
+        "iron" : iron
+    }
+
+    TribalWars.post("market", {
+        "ajaxaction" : "map_send",
+        "village" : originId
+    }, form, function(data){
+        console.log(data)
+    }, false);
+}
+
 // Define the sendResource function - joinked from Shinko
 function sendResource(villageId, targetId, amount, dialogId) {
+    console.log("SEND RES", villageId, targetId, amount, dialogId)
     // Set a loading flag to true temporarily
     $('#loading').prop('visible', true);
 
@@ -230,15 +247,15 @@ function sendResource(villageId, targetId, amount, dialogId) {
         UI.SuccessMessage(response.message); // Show a success message
         console.log(response.message); // Log the response message
 
-        // Update total sent resource amounts
-        totalWoodSent += woodAmount;
-        totalStoneSent += stoneAmount;
-        totalIronSent += ironAmount;
+        // // Update total sent resource amounts
+        // totalWoodSent += woodAmount;
+        // totalStoneSent += stoneAmount;
+        // totalIronSent += ironAmount;
 
-        // Update displayed total sent resource amounts
-        $('.wood_sent').eq(0).text('' + numberWithCommas(totalWoodSent));
-        $('.stone_sent').eq(0).text('' + numberWithCommas(totalStoneSent));
-        $('.iron_sent').eq(0).text('' + numberWithCommas(totalIronSent));
+        // // Update displayed total sent resource amounts
+        // $('.wood_sent').eq(0).text('' + numberWithCommas(totalWoodSent));
+        // $('.stone_sent').eq(0).text('' + numberWithCommas(totalStoneSent));
+        // $('.iron_sent').eq(0).text('' + numberWithCommas(totalIronSent));
     }, false); // Perform the request asynchronously
 }
 
@@ -331,7 +348,7 @@ function sendToNearest(source, mintVillage, villages){
         <td>${source.name}</td>
 		<td>${sendToVillage.name}</td>
         <td>Wood: ${amount.wood}, Stone: ${amount.stone}, Iron: ${amount.iron}</td>
-		<td><button onclick="sendResource('${source.id}', '${sendToVillage.id}', ${JSON.stringify(amount)}, 'dialog_${source.id}_${sendToVillage.id}')">Send</button></td>
+		<td><button onclick="sendPlease('${source.id}', '${sendToVillage.id}', ${JSON.stringify(amount)}, 'dialog_${source.id}_${sendToVillage.id}')">Send</button></td>
     `;
 
     // Append row to table body
