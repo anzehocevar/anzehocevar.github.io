@@ -20,6 +20,7 @@ function getMintVillage() {
 }
 
 let mintVillage = getMintVillage()
+console.log(mintVillage)
 let woodPercentage = 0.6;
 let stonePercentage = 0.5207;
 let ironPercentage = 0.4252;
@@ -85,7 +86,7 @@ rows.forEach(function(row) {
 });
 
 mintVillage = villages.find(function(village) {
-    return village.coordX === mintVillage.X && village.coordY === mintVillage.Y;
+    return parseInt(village.coordX) === parseInt(mintVillage.X) && parseInt(village.coordY) === parseInt(mintVillage.Y);
 });
 
 console.log("mint village:", mintVillage)
