@@ -4,11 +4,11 @@ function getMintVillage() {
     let values = { X: "", Y: "" };
     if (userInput !== null) {
         let parts = userInput.split('|');
-        
+
         if (parts.length === 2) {
             values.X = parts[0].trim();
             values.Y = parts[1].trim();
-            
+
             // Here, you can do whatever you want with the two parts
             console.log("X:", values.X);
             console.log("Y:", values.Y);
@@ -16,7 +16,7 @@ function getMintVillage() {
             alert("Invalid format!'xxx|yyy'.");
         }
     }
-	return values;
+    return values;
 }
 
 let mintVillage = getMintVillage()
@@ -47,7 +47,7 @@ function extractVillageInfo(row) {
 
     // Extract resource values from either '.res' or '.warn_90' elements
     if (resources.length >= 3) {
-        resources.forEach(function(resource, index) {
+        resources.forEach(function (resource, index) {
             let text = resource.innerText.trim().replace(/\s/g, '');
             if (index === 0) {
                 wood = text.replace('.', '');
@@ -86,24 +86,24 @@ let rows = productionTableBody.querySelectorAll('tr');
 
 // Loop through each row and extract village information
 let villages = [];
-rows.forEach(function(row) {
+rows.forEach(function (row) {
     let villageInfo = extractVillageInfo(row);
     villages.push(villageInfo);
-	console.log(villageInfo)
+    console.log(villageInfo)
 });
 
 // find all information about mintVillage
-mintVillage = villages.find(function(village) {
+mintVillage = villages.find(function (village) {
     return parseInt(village.X) == parseInt(mintVillage.X) && parseInt(village.Y) == parseInt(mintVillage.Y);
 });
 
 // get distance from mintVillage
-villages.forEach(function(village) {
+villages.forEach(function (village) {
     return getDistance(mintVillage, village);
 });
 
 // Sort villages by distance in decreasing order
-villages.sort(function(a, b) {
+villages.sort(function (a, b) {
     return b.distance - a.distance; // Sort in decreasing order
 });
 
@@ -126,86 +126,80 @@ function createTable() {
         </thead>
         <tbody id="resourceSenderBody"></tbody>
     `;
-    
+
     tableContainer.appendChild(table);
 }
 
-
-function findNearestInDirection(source, mintVillage, villages, amount) {
-    // Parse the coordinates of the source and mintVillage
-    let sourceX = parseInt(source.X);
-    let sourceY = parseInt(source.Y);
-
-    let mintX = parseInt(mintVillage.X);
-    let mintY = parseInt(mintVillage.Y);
-
-    // Calculate the direction vector from source to mintVillage
-    let directionX = mintX - sourceX;
-    let directionY = mintY - sourceY;
+let preventOverflow = 10000;
+function maxFlow(source, mintVillage, villages) {
 
     // Initialize variables to store the nearest village and its distance
-    let nearestVillage = null;
-    let minDistance = Number.MAX_SAFE_INTEGER;
+    let maxFlowVillage = null;
+    let maxFlowAmount = { wood: 0, stone: 0, iron: 0 };
 
     // Loop through all villages
-    villages.forEach(function(village) {
-        // skip villages with the same distance
-        if(source.distance < village.distance || (source.id != village.id)) return;
+    villages.forEach(function (destination) {
+        let distanceBetweenVillages = getDistance(source, destination);
 
-        // Parse the coordinates of the current village
-        let villageX = parseInt(village.X);
-        let villageY = parseInt(village.Y);
+        // Check if the current village is closer
+        if (destination.distance < source.distance &&
+            // new path needs to be shorter then the direct (straight to mint)
+            (destination.distance + distanceBetweenVillages < source.destination) &&
+            source.id != destination.id
+        ) {
+            // Calculate resource amounts (shinko)
+            let amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
 
-        // Calculate the vector from source to the current village
-        let vectorX = villageX - sourceX;
-        let vectorY = villageY - sourceY;
+            // Calculate the maximum amount of resources that can be sent to this village without overflowing its warehouse
+            let availableWood = Math.min(amount.wood, destination.warehouse - preventOverflow - destination.wood);
+            let availableStone = Math.min(amount.stone, destination.warehouse - preventOverflow - destination.stone);
+            let availableIron = Math.min(amount.iron, destination.warehouse - preventOverflow - destination.iron);
 
-        // Check if the current village is in the same direction as mintVillage
-        if (vectorX * directionX >= 0 && vectorY * directionY >= 0) {
-            // Calculate the distance between the source and the current village
-            let distance = Math.sqrt(Math.pow(vectorX, 2) + Math.pow(vectorY, 2));
+            // Calculate the total available resources that can be sent to this village
+            let totalAvailableResources = availableWood + availableStone + availableIron;
 
-            // Check if the current village is closer
-            if (distance < minDistance && 
-                village.wood + amount.wood < village.warehouse &&
-                village.stone + amount.stone < village.warehouse &&
-                village.iron + amount.iron < village.warehouse) {
-                nearestVillage = village;
-                minDistance = distance;
+            // Update maxFlowVillage if the current village allows for more resources to be sent
+            if (totalAvailableResources > maxFlowAmount.wood + maxFlowAmount.stone + maxFlowAmount.iron) {
+                maxFlowVillage = destination;
+                maxFlowAmount = {
+                    wood: availableWood,
+                    stone: availableStone,
+                    iron: availableIron
+                };
             }
         }
     });
 
-    if (nearestVillage) {
-        // Update the resources of the nearest village globally
-        nearestVillage.wood += amount.wood;
-        nearestVillage.stone += amount.stone;
-        nearestVillage.iron += amount.iron;
+    if (maxFlowVillage) {
+        // Update the resources of the maxFlowVillage globally
+        maxFlowVillage.wood += maxFlowAmount.wood;
+        maxFlowVillage.stone += maxFlowAmount.stone;
+        maxFlowVillage.iron += maxFlowAmount.iron;
     }
 
-    return nearestVillage;
+    return { village: maxFlowVillage, amount: maxFlowAmount };
 }
 
 
-function getDistance(source, destination){
+function getDistance(source, destination) {
     destination.distance = Math.sqrt(Math.pow((source.X - destination.X), 2) + Math.pow((source.Y - destination.Y), 2));
     return destination;
 }
 
 
-function sendPlease(targetId, originId, wood, stone, iron){
-    
+function sendPlease(targetId, originId, wood, stone, iron) {
+
     var form = {
-        "target_id" : targetId, 
-        "wood" : wood,
-        "stone" : stone, 
-        "iron" : iron
+        "target_id": targetId,
+        "wood": wood,
+        "stone": stone,
+        "iron": iron
     }
 
     TribalWars.post("market", {
-        "ajaxaction" : "map_send",
-        "village" : originId
-    }, form, function(data){
+        "ajaxaction": "map_send",
+        "village": originId
+    }, form, function (data) {
         console.log(data)
     }, false);
 }
@@ -217,7 +211,7 @@ function sendResource(villageId, targetId, amount, dialogId) {
     $('#loading').prop('visible', true);
 
     // Set a timeout to remove loading flag after 200 milliseconds
-    setTimeout(function() {
+    setTimeout(function () {
         $('#' + dialogId)[0].remove(); // Remove a dialog element by ID
         $('#loading').prop('visible', false); // Set loading flag to false
         $('#bottom')[3].scrollIntoView(); // Scroll to the bottom of the page
@@ -243,7 +237,7 @@ function sendResource(villageId, targetId, amount, dialogId) {
     TribalWars.post('/game.php?village=' + villageId, {
         'ajaxaction': 'resources_send',
         'village': villageId
-    }, resources, function(response) {
+    }, resources, function (response) {
         Dialog.close(); // Close a dialog
         UI.SuccessMessage(response.message); // Show a success message
         console.log(response.message); // Log the response message
@@ -317,25 +311,23 @@ function calculateResAmounts(totalWood, totalStone, totalIron, resLimit, merchan
 
 
 function sendToNearest(source, mintVillage, villages) {
-    let x = mintVillage.X;
-    let y = mintVillage.Y;
-    x -= source.X;
-    y -= source.Y;
 
     // Calculate resource amounts (shinko)
-    let amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
+    // let amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
 
-    // Gets the nearest village that has enough warehouse & is closer
-    let sendToVillage = findNearestInDirection(source, mintVillage, villages, amount);
+    //return { village: maxFlowVillage, amount: maxFlowAmount };
+    let maxFlowInformation = maxFlow(source, mintVillage, villages);
+    let sendToVillage = maxFlowInformation.village;
+    let amount = maxFlowInformation.amount;
 
     if (sendToVillage == null) {
         console.log("No nearest village found");
-        // Handle case when no suitable village is found
-        // You can set sendToVillage to mintVillage or any other default value
+        // Use default
         sendToVillage = mintVillage;
     }
 
     console.log("Sending to village:", sendToVillage);
+    console.log("amount", amount);
 
     // Create HTML row for sending
     let row = document.createElement('tr');
@@ -357,10 +349,10 @@ function sendToNearest(source, mintVillage, villages) {
 
 createTable();
 
-villages.forEach(function(village){
-	if (village.X != mintVillage.X || village.Y != mintVillage.Y) {
-		sendToNearest(village, mintVillage, villages);
-	}
+villages.forEach(function (village) {
+    if (village.X != mintVillage.X || village.Y != mintVillage.Y) {
+        sendToNearest(village, mintVillage, villages);
+    }
 });
 
 
