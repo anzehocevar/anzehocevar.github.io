@@ -135,7 +135,7 @@ function maxFlow(source, mintVillage, villages) {
 
     // Initialize variables to store the nearest village and its distance
     let maxFlowVillage = null;
-    let maxFlowAmount = { wood: 0, stone: 0, iron: 0 };
+    let maxFlowAmount = { wood: 0, stone: 0, iron: 0, merchants: 1 };
 
     // Loop through all villages
     villages.forEach(function (destination) {
@@ -145,7 +145,7 @@ function maxFlow(source, mintVillage, villages) {
         if (destination.distance < source.distance &&
             // new path needs to be shorter then the direct (straight to mint)
             (destination.distance + distanceBetweenVillages < source.destination) &&
-            source.id != destination.id
+            source.id != destination.id // can't send to yourself
         ) {
             // Calculate resource amounts (shinko)
             let amount = calculateResAmounts(source.wood, source.stone, source.iron, 0, source.merchants);
@@ -159,12 +159,15 @@ function maxFlow(source, mintVillage, villages) {
             let totalAvailableResources = availableWood + availableStone + availableIron;
 
             // Update maxFlowVillage if the current village allows for more resources to be sent
-            if (totalAvailableResources > maxFlowAmount.wood + maxFlowAmount.stone + maxFlowAmount.iron) {
+            if (totalAvailableResources >
+                (maxFlowAmount.wood + maxFlowAmount.stone + maxFlowAmount.iron) / maxFlowAmount.merchants) {
+
                 maxFlowVillage = destination;
                 maxFlowAmount = {
                     wood: availableWood,
                     stone: availableStone,
-                    iron: availableIron
+                    iron: availableIron,
+                    merchants: destination.merchants
                 };
             }
         }
